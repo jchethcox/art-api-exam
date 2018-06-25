@@ -8,3 +8,5 @@ module.exports = (prefix, replaceVal, str) =>
     concat('_'),
     trim
   )(str)
+
+//generates an _id for given painting using the painting's name

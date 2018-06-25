@@ -1,13 +1,12 @@
+//intial linking of the paintings to database
 require('dotenv').config()
 const PouchDB = require('pouchdb-core')
 PouchDB.plugin(require('pouchdb-adapter-http'))
-
 const db = new PouchDB(
   `${process.env.COUCH_HOSTNAME}${process.env.COUCH_DBNAME}`
 )
 
 //My database of art
-
 const joshart = [
   {
     _id: 'painting_starry_night',
@@ -68,6 +67,7 @@ const joshart = [
   }
 ]
 
+//access to  all docs in future
 db.bulkDocs(joshart, function(err, result) {
   if (err) {
     console.log('ERROR', JSON.stringify(err))

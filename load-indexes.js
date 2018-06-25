@@ -1,3 +1,4 @@
+//loads indexes into database
 require('dotenv').config()
 const PouchDB = require('pouchdb')
 PouchDB.plugin(require('pouchdb-find'))
