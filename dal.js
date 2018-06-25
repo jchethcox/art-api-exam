@@ -19,9 +19,12 @@ const replacePainting = (painting, cb) => db.put(painting, cb)
 
 //posts a new painting to the database
 const addPainting = (painting, cb) => {
+  const NoThe = painting.name.replace('The', '')
+  const NoA = NoThe.replace('A', '')
+  const NoAn = NoA.replace('An', '')
   const newPainting = merge(painting, {
     type: 'painting',
-    _id: pkgen('painting', '_', `${painting.name}`)
+    _id: pkgen('painting', '_', `${NoAn}`)
   })
   db.put(newPainting, cb)
 }
