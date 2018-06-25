@@ -21,7 +21,13 @@ const {
   path
 } = require('ramda')
 
-const { addPainting, getPainting } = require('./dal')
+const {
+  addPainting,
+  getPainting,
+  deletePainting,
+  replacePainting,
+  listPaintings
+} = require('./dal')
 
 const bodyParser = require('body-parser')
 const NodeHTTPError = require('node-http-error')
@@ -42,6 +48,15 @@ app.get('/paintings/:paintingID', function(req, res, next) {
     }
     res.status(200).send(result)
   })
+})
+
+app.get('/paintings', function(req, res, next) {
+  const limit = Number(pathOr(5, ['query', 'limit'], req))
+  const paginate = pathOr(null, ['query', 'start_key'], req)
+
+  listPaintings(limit, paginate)
+    .then(paintings => res.status(200).send(paintings))
+    .catch(err => next(new NodeHTTPError(err.status, err.message, err)))
 })
 
 app.post('/paintings', function(req, res, next) {
@@ -69,7 +84,7 @@ app.post('/paintings', function(req, res, next) {
   })
 })
 
-app.put('/paintings/:id', function(req, res, next) {
+app.put('/paintings/:_id', function(req, res, next) {
   const modPainting = propOr({}, 'body', req)
 
   if (isEmpty(modPainting)) {
@@ -87,12 +102,25 @@ app.put('/paintings/:id', function(req, res, next) {
     return
   }
 
-  if (not(propEq('id', req.params.id, modPainting))) {
+  if (not(propEq('_id', req.params._id, modPainting))) {
     next(new NodeHTTPError(400, 'This id doesnt match the URI path id value'))
     return
   }
 
   replacePainting(modPainting, function(err, data) {
+    if (err) {
+      next(new NodeHTTPError(err.status, err.message, err))
+      return
+    }
+    res.status(200).send(data)
+  })
+})
+
+app.delete('/paintings/:_id', function(req, res, next) {
+  const paintingID = req.params._id
+  console.log(('paintingID: ', paintingID))
+
+  deletePainting(paintingID, function(err, data) {
     if (err) {
       next(new NodeHTTPError(err.status, err.message, err))
       return
